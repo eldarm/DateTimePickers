@@ -14,7 +14,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 /**
- * Created by eldarm on 10/7/14.
+ * List with the selectexd dates - the main screen of the application.
  */
 public class ListDatesActivity extends ActionBarActivity {
     private static final String LOG_TAG = ListDatesActivity.class.getCanonicalName();
