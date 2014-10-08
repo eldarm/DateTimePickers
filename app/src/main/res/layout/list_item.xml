@@ -9,5 +9,19 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="@string/ItemSampleText"
-        android:id="@+id/textItemView" />
+        android:id="@+id/textItemLabelView"
+        android:layout_marginTop="10dp"
+        android:capitalize="characters"
+        android:textSize="30dp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Large Text"
+        android:id="@+id/textItemValueView"
+        android:layout_marginBottom="10pt"
+        android:textAlignment="center"
+        android:singleLine="false" />
 </LinearLayout>
