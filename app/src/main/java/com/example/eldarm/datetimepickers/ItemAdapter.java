@@ -11,7 +11,9 @@ import android.widget.TextView;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Vector;
 
 /**
@@ -27,15 +29,29 @@ public class ItemAdapter extends BaseAdapter {
         private final long minInHour = 60;
         private final long hoursInDay = 24;
         private final long daysInYear = 365;
+        private final long secInYear = secInMin * minInHour * hoursInDay * daysInYear;
 
-        public SpecialDate(String label, String date) {
+        public SpecialDate(String label, String dateString) {
             this.label = label;
+            Date date;
             try {
-                this.date = format.parse(date);
+                date = format.parse(dateString);
             } catch (ParseException e) {
                 // Don't trash the app but better have a look in the trace.
                 e.printStackTrace();
+                date = new Date();
             }
+            now = new GregorianCalendar();
+            cal = new GregorianCalendar();
+            cal.setTime(date);
+            aniversary = new GregorianCalendar(now.get(Calendar.YEAR),
+                    cal.get(Calendar.MONTH),
+                    cal.get(Calendar.DAY_OF_MONTH),
+                    cal.get(Calendar.HOUR_OF_DAY),
+                    cal.get(Calendar.MINUTE),
+                    cal.get(Calendar.SECOND));
+            System.out.println("The date       is " + format.format(cal.getTime()));
+            System.out.println("The aniversary is " + format.format(aniversary.getTime()));
         }
 
         public String getLabel() {
@@ -44,47 +60,50 @@ public class ItemAdapter extends BaseAdapter {
 
         @Override
         public String toString() {
-            return format.format(date);
-        }
-
-        private long secondsSince() {
-            return ((new Date()).getTime() - date.getTime()) / 1000;
-        }
-
-        public String timeSinceFormat(long seconds) {
-            long minutes = seconds / secInMin;
-            long hours = minutes / minInHour;
-            long days = hours / hoursInDay;
-            long years = days / daysInYear;
-
-            seconds -= minutes * secInMin;
-            minutes -= hours * minInHour;
-            hours -= days * hoursInDay;
-            days -= years * daysInYear;
-            // Yes, the result for large intervals will give wrong number of years.
-            // We'll improve it later.
-            String yearsString = years == 0 ? "" : String.format("%d years ", years);
-            //return String.format("%s: %s%d days %d hours %d minutes %d seconds",
-            //        label, yearsString, days, hours, minutes, seconds);
-            return String.format("%s%d days %d hours %d minutes",
-                                 yearsString, days, hours, minutes);
+            return format.format(cal.getTime());
         }
 
         public String timeSince() {
-            return timeSinceFormat(secondsSince());
+            long years = now.get(Calendar.YEAR) - cal.get(Calendar.YEAR);
+            long shift = aniversaryShiftSec();
+            // System.out.println("Shift: " + shift);
+            if (shift > 0) {
+                years--;
+                shift = secInYear - shift;
+            } else {
+                shift = -shift;
+            }
+            String yearsString = years == 0 ? "" : String.format("%d years ", years);
+            return yearsString + formatShift(shift);
         }
 
         public String timeTillAniversary() {
-            final long secondsInYear = secInMin * minInHour * hoursInDay * daysInYear;
-            final long seconds = secondsSince();
-            final long years = seconds / secondsInYear;
-            return timeSinceFormat(secondsInYear - seconds + years * secondsInYear);
+            long shift = aniversaryShiftSec();
+            // System.out.println("Shift: " + shift);
+            if (shift < 0) {
+                shift = secInYear + shift; // Actually, minus, since it's < 0.
+            }
+            return formatShift(shift);
         }
 
-        private SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        private Date date;
+        private String formatShift(long shift) {
+            long seconds = shift % secInMin;
+            long minutes = shift / secInMin % minInHour;
+            long hours = shift / (secInMin * minInHour) % hoursInDay;
+            long days = shift / (secInMin * minInHour * hoursInDay);
+            return String.format("%d days %d hours %d minutes %d seconds", days, hours, minutes, seconds);
+        }
+
+        private long aniversaryShiftSec() {
+            return (aniversary.getTime().getTime() - now.getTime().getTime()) / 1000;
+        }
+
+        protected SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        protected GregorianCalendar now;
+        private GregorianCalendar cal;
+        private GregorianCalendar aniversary;
         private String label;
-    }
+    } // class SpecialDate
 
     private Vector<SpecialDate> data;
 
