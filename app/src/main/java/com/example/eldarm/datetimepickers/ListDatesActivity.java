@@ -1,5 +1,6 @@
 package com.example.eldarm.datetimepickers;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
@@ -12,13 +13,58 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.util.Vector;
 
 /**
  * List with the selectexd dates - the main screen of the application.
  */
 public class ListDatesActivity extends ActionBarActivity {
     private static final String LOG_TAG = ListDatesActivity.class.getCanonicalName();
+    private static final String DATES_URL =
+        "https://sites.google.com/site/gayauniverse/kniga-2-lar/cernoviki/kniga-3-dezurstvo-po-mirozdaniu-fragment/dates.txt";
     private ItemAdapter itemAdapter;
+
+    class DownloadDatesAsyncTask extends AsyncTask<String, Void, Vector<SpecialDate>> {
+        private String imageUrl;
+
+        @Override
+        protected Vector<SpecialDate> doInBackground(String... params) {
+            imageUrl = params[0];
+            try {
+                URL datesUrl = new URL(imageUrl);
+                InputStream is = (InputStream) datesUrl.getContent();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+                Vector<SpecialDate> dates = new Vector<SpecialDate>();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    String[] parts = line.split(":", 2);
+                    if (parts.length != 2) {
+                        Log.e("DownloadDatesAsyncTask", "Incorrect string format: " + line);
+                        continue;  // Wrong format.
+                    }
+                    dates.add(new SpecialDate(parts[0], parts[1]));
+                }
+                return dates;
+            } catch (IOException e) {
+                Log.e("DownloadDatesAsyncTask", "Error reading the dates", e);
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Vector<SpecialDate> result) {
+            if (result != null) {
+                itemAdapter.setDates(result);
+            }
+        }
+    }
 
     //Fragment that displays the meme.
     public static class ListDatesFragment extends Fragment {
@@ -59,6 +105,11 @@ public class ListDatesActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_settings) {
+            return true;
+        }
+        if (id == R.id.action_load_dates) {
+            Toast.makeText(this, "Adding the dates from Internet...", Toast.LENGTH_LONG).show();
+            new DownloadDatesAsyncTask().execute(DATES_URL);
             return true;
         }
         return super.onOptionsItemSelected(item);

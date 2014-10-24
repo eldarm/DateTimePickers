@@ -9,11 +9,6 @@ import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Vector;
 
 /**
@@ -24,99 +19,21 @@ public class ItemAdapter extends BaseAdapter {
     private final Context context;
     private final LayoutInflater layoutInflater;
 
-    private static class SpecialDate {
-        private final long secInMin = 60;
-        private final long minInHour = 60;
-        private final long hoursInDay = 24;
-        private final long daysInYear = 365;
-        private final long secInYear = secInMin * minInHour * hoursInDay * daysInYear;
-
-        public SpecialDate(String label, String dateString) {
-            this.label = label;
-            Date date;
-            try {
-                date = format.parse(dateString);
-            } catch (ParseException e) {
-                // Don't trash the app but better have a look in the trace.
-                e.printStackTrace();
-                date = new Date();
-            }
-            now = new GregorianCalendar();
-            cal = new GregorianCalendar();
-            cal.setTime(date);
-            aniversary = new GregorianCalendar(now.get(Calendar.YEAR),
-                    cal.get(Calendar.MONTH),
-                    cal.get(Calendar.DAY_OF_MONTH),
-                    cal.get(Calendar.HOUR_OF_DAY),
-                    cal.get(Calendar.MINUTE),
-                    cal.get(Calendar.SECOND));
-            System.out.println("The date       is " + format.format(cal.getTime()));
-            System.out.println("The aniversary is " + format.format(aniversary.getTime()));
-        }
-
-        public String getLabel() {
-            return label;
-        }
-
-        @Override
-        public String toString() {
-            return format.format(cal.getTime());
-        }
-
-        public String timeSince() {
-            long years = now.get(Calendar.YEAR) - cal.get(Calendar.YEAR);
-            long shift = aniversaryShiftSec();
-            // System.out.println("Shift: " + shift);
-            if (shift > 0) {
-                years--;
-                shift = secInYear - shift;
-            } else {
-                shift = -shift;
-            }
-            String yearsString = years == 0 ? "" : String.format("%d years ", years);
-            return yearsString + formatShift(shift);
-        }
-
-        public String timeTillAniversary() {
-            long shift = aniversaryShiftSec();
-            // System.out.println("Shift: " + shift);
-            if (shift < 0) {
-                shift = secInYear + shift; // Actually, minus, since it's < 0.
-            }
-            return formatShift(shift);
-        }
-
-        private String formatShift(long shift) {
-            long seconds = shift % secInMin;
-            long minutes = shift / secInMin % minInHour;
-            long hours = shift / (secInMin * minInHour) % hoursInDay;
-            long days = shift / (secInMin * minInHour * hoursInDay);
-            return String.format("%d days %d hours %d minutes %d seconds", days, hours, minutes, seconds);
-        }
-
-        private long aniversaryShiftSec() {
-            return (aniversary.getTime().getTime() - now.getTime().getTime()) / 1000;
-        }
-
-        protected SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        protected GregorianCalendar now;
-        private GregorianCalendar cal;
-        private GregorianCalendar aniversary;
-        private String label;
-    } // class SpecialDate
-
     private Vector<SpecialDate> data;
 
     public ItemAdapter(Context c) {
         data = new Vector<SpecialDate>();
         // Fixed list for now, we will learn to load and save it later.
         // Feel free to put your own dates here.
-        data.add(new SpecialDate("G", "2010/09/27 09:00:00"));
-        data.add(new SpecialDate("Z", "2012/10/01 10:00:00"));
         data.add(new SpecialDate("M", "2000/04/28 08:00:00"));
 
         context = c;
         layoutInflater = LayoutInflater.from(context);
+    }
+
+    public void setDates(Vector<SpecialDate> dates) {
+        data = dates;
+        notifyDataSetChanged();
     }
 
     @Override

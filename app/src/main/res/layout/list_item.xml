@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="@string/ItemSampleText"
+        android:text="@string/item_sample_text"
         android:id="@+id/textItemLabelView"
         android:layout_marginTop="10dp"
         android:capitalize="characters"
