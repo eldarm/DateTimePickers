@@ -9,6 +9,11 @@ import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Vector;
 
 /**
@@ -20,20 +25,49 @@ public class ItemAdapter extends BaseAdapter {
     private final LayoutInflater layoutInflater;
 
     private Vector<SpecialDate> data;
+    private final String dataFileName = "data_my_dates.txt";
 
     public ItemAdapter(Context c) {
         data = new Vector<SpecialDate>();
-        // Fixed list for now, we will learn to load and save it later.
-        // Feel free to put your own dates here.
-        data.add(new SpecialDate("M", "2000/04/28 08:00:00"));
-
+        loadDates();
         context = c;
         layoutInflater = LayoutInflater.from(context);
     }
 
     public void setDates(Vector<SpecialDate> dates) {
-        data = dates;
-        notifyDataSetChanged();
+        if (dates != null) {
+            data = dates;
+            notifyDataSetChanged();
+        }
+    }
+
+    public void saveDates() {
+        StringBuffer result = new StringBuffer();
+        for (SpecialDate date : data) {
+            result.append(date.getLabel());
+            result.append(":");
+            result.append(date.toString());
+            result.append("\n");
+        }
+        try {
+            FileOutputStream outputStream =
+                context.openFileOutput(dataFileName, Context.MODE_PRIVATE);
+            outputStream.write(result.toString().getBytes());
+            outputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void loadDates() {
+        try {
+            FileInputStream is = context.openFileInput(dataFileName);
+            setDates(SpecialDate.readDatesList(is));
+            is.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return;  // dummy
     }
 
     @Override

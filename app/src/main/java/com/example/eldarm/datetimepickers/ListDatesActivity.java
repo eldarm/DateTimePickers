@@ -40,20 +40,9 @@ public class ListDatesActivity extends ActionBarActivity {
             try {
                 URL datesUrl = new URL(imageUrl);
                 InputStream is = (InputStream) datesUrl.getContent();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-                Vector<SpecialDate> dates = new Vector<SpecialDate>();
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    String[] parts = line.split(":", 2);
-                    if (parts.length != 2) {
-                        Log.e("DownloadDatesAsyncTask", "Incorrect string format: " + line);
-                        continue;  // Wrong format.
-                    }
-                    dates.add(new SpecialDate(parts[0], parts[1]));
-                }
-                return dates;
+                return SpecialDate.readDatesList(is);
             } catch (IOException e) {
-                Log.e("DownloadDatesAsyncTask", "Error reading the dates", e);
+                Log.e(LOG_TAG, "Error reading the dates", e);
             }
             return null;
         }
@@ -62,6 +51,7 @@ public class ListDatesActivity extends ActionBarActivity {
         protected void onPostExecute(Vector<SpecialDate> result) {
             if (result != null) {
                 itemAdapter.setDates(result);
+                itemAdapter.saveDates();  // Because setDates() does not saves them.
             }
         }
     }

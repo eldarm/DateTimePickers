@@ -1,15 +1,23 @@
 package com.example.eldarm.datetimepickers;
 
+import android.util.Log;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Vector;
 
 /**
  * Created by eldarm on 10/24/14.
  */
 class SpecialDate {
+    private static final String LOG_TAG = ListDatesActivity.class.getCanonicalName();
     private final long secInMin = 60;
     private final long minInHour = 60;
     private final long hoursInDay = 24;
@@ -67,6 +75,25 @@ class SpecialDate {
             shift = secInYear + shift; // Actually, minus, since it's < 0.
         }
         return formatShift(shift);
+    }
+
+    public static Vector<SpecialDate> readDatesList(InputStream is) {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        Vector<SpecialDate> dates = new Vector<SpecialDate>();
+        String line;
+        try {
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(":", 2);
+                if (parts.length != 2) {
+                    Log.e(LOG_TAG, "Incorrect string format: '" + line + "'");
+                    continue;  // Wrong format.
+                }
+                dates.add(new SpecialDate(parts[0], parts[1]));
+            }
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "Error reading the dates", e);
+        }
+        return dates;
     }
 
     private String formatShift(long shift) {
