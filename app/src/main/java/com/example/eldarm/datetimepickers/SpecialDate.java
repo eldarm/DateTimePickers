@@ -17,7 +17,7 @@ import java.util.Vector;
  * Created by eldarm on 10/24/14.
  */
 class SpecialDate {
-    private static final String LOG_TAG = ListDatesActivity.class.getCanonicalName();
+    private static final String LOG_TAG = SpecialDate.class.getCanonicalName();
     private final long secInMin = 60;
     private final long minInHour = 60;
     private final long hoursInDay = 24;
@@ -105,6 +105,7 @@ class SpecialDate {
     }
 
     private long anniversaryShiftSec() {
+        now = new GregorianCalendar();
         return (anniversary.getTime().getTime() - now.getTime().getTime()) / 1000;
     }
 

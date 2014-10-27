@@ -2,6 +2,7 @@ package com.example.eldarm.datetimepickers;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -20,6 +21,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.Vector;
 
 /**
@@ -29,6 +32,8 @@ public class ListDatesActivity extends ActionBarActivity {
     private static final String LOG_TAG = ListDatesActivity.class.getCanonicalName();
     private static final String DATES_URL =
         "https://sites.google.com/site/gayauniverse/kniga-2-lar/cernoviki/kniga-3-dezurstvo-po-mirozdaniu-fragment/dates.txt";
+    private Timer timer;
+    private final Handler timeHandler = new Handler();
     private ItemAdapter itemAdapter;
 
     class DownloadDatesAsyncTask extends AsyncTask<String, Void, Vector<SpecialDate>> {
@@ -79,6 +84,31 @@ public class ListDatesActivity extends ActionBarActivity {
         }
         itemAdapter = new ItemAdapter(this);
         listView.setAdapter(itemAdapter);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        itemAdapter.loadDates();
+        timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                // itemAdapter.notifyDataSetChanged();
+                timeHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        itemAdapter.notifyDataSetChanged();
+                    }
+                });
+            }
+        }, 500, 1000);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        timer.cancel();
     }
 
     @Override

@@ -28,8 +28,7 @@ public class ItemAdapter extends BaseAdapter {
     private final String dataFileName = "data_my_dates.txt";
 
     public ItemAdapter(Context c) {
-        data = new Vector<SpecialDate>();
-        loadDates();
+        data = new Vector<SpecialDate>();  // Temp, until loaded.
         context = c;
         layoutInflater = LayoutInflater.from(context);
     }
@@ -51,10 +50,11 @@ public class ItemAdapter extends BaseAdapter {
         }
         try {
             FileOutputStream outputStream =
-                context.openFileOutput(dataFileName, Context.MODE_PRIVATE);
+                    context.openFileOutput(dataFileName, Context.MODE_APPEND);
             outputStream.write(result.toString().getBytes());
             outputStream.close();
         } catch (Exception e) {
+            Log.d(LOG_TAG, String.format("Error writing the file: %s", dataFileName));
             e.printStackTrace();
         }
     }
@@ -65,6 +65,7 @@ public class ItemAdapter extends BaseAdapter {
             setDates(SpecialDate.readDatesList(is));
             is.close();
         } catch (Exception e) {
+            Log.d(LOG_TAG, String.format("Error reading the file: %s", dataFileName));
             e.printStackTrace();
         }
         return;  // dummy
@@ -77,19 +78,19 @@ public class ItemAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int i) {
-        Log.d(LOG_TAG, String.format("getItem() for item %d", i));
+        //Log.d(LOG_TAG, String.format("getItem() for item %d", i));
         return null;
     }
 
     @Override
     public long getItemId(int i) {
-        Log.d(LOG_TAG, String.format("getItemId() for item %d", i));
+        //Log.d(LOG_TAG, String.format("getItemId() for item %d", i));
         return 0;
     }
 
     @Override
     public View getView(int i, View view, ViewGroup parent) {
-        Log.d(LOG_TAG, String.format("getView() for item %d", i));
+        // Log.d(LOG_TAG, String.format("getView() for item %d", i));
         LinearLayout itemView;
         if (view == null) { // Create a new view if no recycled view is available
             itemView = (LinearLayout) layoutInflater.inflate(
