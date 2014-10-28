@@ -1,5 +1,6 @@
 package com.example.eldarm.datetimepickers;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -130,6 +131,11 @@ public class ListDatesActivity extends ActionBarActivity {
         if (id == R.id.action_load_dates) {
             Toast.makeText(this, "Adding the dates from Internet...", Toast.LENGTH_LONG).show();
             new DownloadDatesAsyncTask().execute(DATES_URL);
+            return true;
+        }
+        if (id == R.id.action_add_date) {
+            Intent intent = new Intent(ListDatesActivity.this, DateTimePickerActivity.class);
+            startActivity(intent);
             return true;
         }
         return super.onOptionsItemSelected(item);

@@ -5,8 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ListDatesActivity" >
 
-    <item android:id="@+id/action_load_dates"
-        android:title="@string/load_dates_menu"
+    <item android:id="@+id/action_add_date"
+        android:title="@string/action_add_date"
         android:orderInCategory="100"
         app:showAsAction="always" />
 
@@ -15,8 +15,8 @@
         android:orderInCategory="100"
         app:showAsAction="never" />
 
-    <item android:id="@+id/action_add_date"
-        android:title="@string/action_add_date"
+    <item android:id="@+id/action_load_dates"
+        android:title="@string/load_dates_menu"
         android:orderInCategory="100"
         app:showAsAction="never" />
 

@@ -10,18 +10,16 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="@string/item_sample_text"
         android:id="@+id/textItemLabelView"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="10sp"
         android:capitalize="characters"
-        android:textSize="30dp"
         android:textStyle="bold" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Large Text"
         android:id="@+id/textItemValueView"
-        android:layout_marginBottom="10pt"
+        android:layout_marginBottom="10sp"
         android:textAlignment="center"
         android:singleLine="false" />
 </LinearLayout>

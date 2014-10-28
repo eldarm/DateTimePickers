@@ -40,6 +40,12 @@ public class ItemAdapter extends BaseAdapter {
         }
     }
 
+    public void addDate(SpecialDate date) {
+        loadDates();
+        data.add(date);
+        saveDates();
+    }
+
     public void saveDates() {
         StringBuffer result = new StringBuffer();
         for (SpecialDate date : data) {
@@ -49,6 +55,7 @@ public class ItemAdapter extends BaseAdapter {
             result.append("\n");
         }
         try {
+            context.deleteFile(dataFileName);
             FileOutputStream outputStream =
                     context.openFileOutput(dataFileName, Context.MODE_APPEND);
             outputStream.write(result.toString().getBytes());

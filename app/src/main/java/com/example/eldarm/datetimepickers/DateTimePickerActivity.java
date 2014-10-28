@@ -10,43 +10,46 @@ import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-import java.text.DateFormat;
-
 
 public class DateTimePickerActivity extends ActionBarActivity {
     private DatePicker datePicker;
     private TimePicker timePicker;
-    private TextView textView;
+    private TextView textLabel;
+    private TextView textDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_date_time_picker);
+    }
 
-        textView = (TextView)findViewById(R.id.textView);
+    @Override
+    protected void onResume() {
+        super.onResume();
+        textLabel = (TextView)findViewById(R.id.textLabel);
         datePicker = (DatePicker)findViewById(R.id.datePicker);
         timePicker = (TimePicker)findViewById(R.id.timePicker);
         // datePicker.getCalendarView().getDate();
+
 
         final Button button = (Button) findViewById(R.id.DoStuffButton);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Perform action on click
-                textView.setText(
-                  String.format("%04d-%02d-%02dT%02d:%02d",
-                    //DateFormat.getDateTimeInstance().format(datePicker.getCalendarView().getDate()),
-                    // Supported only from API 12, we need at least 9.
-                    datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth(),
-                    timePicker.getCurrentHour(), timePicker.getCurrentMinute()
-                  )
-                );
+                String dateString =
+                        String.format("%04d/%02d/%02d %02d:%02d:00",
+                                //DateFormat.getDateTimeInstance().format(datePicker.getCalendarView().getDate()),
+                                // Supported only from API 12, we need at least 9.
+                                datePicker.getYear(), datePicker.getMonth() + 1, datePicker.getDayOfMonth(),
+                                timePicker.getCurrentHour(), timePicker.getCurrentMinute()
+                        );
+                SpecialDate date = new SpecialDate(textLabel.getText().toString(), dateString);
+                ItemAdapter adapter = new ItemAdapter(DateTimePickerActivity.this);
+                adapter.addDate(date);
+                finish();
             }
         });
-
-        //DatePicker myDatePicker = (DatePicker) findViewById(R.id.mydatepicker);
-        //String selectedDate = DateFormat.getDateInstance().format(myDatePicker.getCalendarView().getDate());
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
