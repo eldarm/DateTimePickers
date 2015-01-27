@@ -51,7 +51,7 @@ public class ItemAdapter extends BaseAdapter {
         for (SpecialDate date : data) {
             result.append(date.getLabel());
             result.append(":");
-            result.append(date.toString());
+            result.append(date.getDate());
             result.append("\n");
         }
         try {
@@ -60,6 +60,7 @@ public class ItemAdapter extends BaseAdapter {
                     context.openFileOutput(dataFileName, Context.MODE_APPEND);
             outputStream.write(result.toString().getBytes());
             outputStream.close();
+            context.sendBroadcast(MyDatesWidgetProvider.createUpdateIntent(context));
         } catch (Exception e) {
             Log.d(LOG_TAG, String.format("Error writing the file: %s", dataFileName));
             e.printStackTrace();
@@ -86,7 +87,7 @@ public class ItemAdapter extends BaseAdapter {
     @Override
     public Object getItem(int i) {
         //Log.d(LOG_TAG, String.format("getItem() for item %d", i));
-        return null;
+        return data.get(i);
     }
 
     @Override
@@ -106,7 +107,7 @@ public class ItemAdapter extends BaseAdapter {
             itemView = (LinearLayout) view;
         }
         TextView textView = (TextView)itemView.findViewById(R.id.textItemLabelView);
-        textView.setText(data.elementAt(i).getLabel() + ": " + data.elementAt(i).toString());
+        textView.setText(data.elementAt(i).getLabel() + ": " + data.elementAt(i).getDate());
         textView = (TextView)itemView.findViewById(R.id.textItemValueView);
         // textView.setText(String.format(parent.getResources().getString(R.string.ItemSampleText), i));
         textView.setText(data.elementAt(i).timeSince());

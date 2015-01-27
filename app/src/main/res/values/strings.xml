@@ -9,5 +9,6 @@
     <string name="load_dates_menu">Load dates</string>
     <string name="date_time_text_prompt">The date and time</string>
     <string name="label_prompt">Describe your date here</string>
+    <string name="clear_dates_menu">Clear dates</string>
 
 </resources>

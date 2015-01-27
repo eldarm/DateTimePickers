@@ -23,6 +23,7 @@ class SpecialDate {
     private final long hoursInDay = 24;
     private final long daysInYear = 365;
     private final long secInYear = secInMin * minInHour * hoursInDay * daysInYear;
+    private static final boolean showUntilAnniversary = false;
 
     public SpecialDate(String label, String dateString) {
         this.label = label;
@@ -51,10 +52,18 @@ class SpecialDate {
 
     @Override
     public String toString() {
+        return showUntilAnniversary ? timeTillAnniversary(true) : timeSince(true);
+    }
+
+    public String getDate() {
         return format.format(cal.getTime());
     }
 
     public String timeSince() {
+        return timeSince(false);
+    }
+
+    public String timeSince(boolean compact) {
         long years = now.get(Calendar.YEAR) - cal.get(Calendar.YEAR);
         long shift = anniversaryShiftSec();
         // System.out.println("Shift: " + shift);
@@ -65,16 +74,20 @@ class SpecialDate {
             shift = -shift;
         }
         String yearsString = years == 0 ? "" : String.format("%d years ", years);
-        return yearsString + formatShift(shift);
+        return yearsString + formatShift(shift, compact);
     }
 
     public String timeTillAnniversary() {
+        return timeTillAnniversary(false);
+    }
+
+    public String timeTillAnniversary(boolean compact) {
         long shift = anniversaryShiftSec();
         // System.out.println("Shift: " + shift);
         if (shift < 0) {
             shift = secInYear + shift; // Actually, minus, since it's < 0.
         }
-        return formatShift(shift);
+        return formatShift(shift, compact);
     }
 
     public static Vector<SpecialDate> readDatesList(InputStream is) {
@@ -96,12 +109,13 @@ class SpecialDate {
         return dates;
     }
 
-    private String formatShift(long shift) {
+    private String formatShift(long shift, boolean compact) {
         long seconds = shift % secInMin;
         long minutes = shift / secInMin % minInHour;
         long hours = shift / (secInMin * minInHour) % hoursInDay;
         long days = shift / (secInMin * minInHour * hoursInDay);
-        return String.format("%d days %d hours %d minutes %d seconds", days, hours, minutes, seconds);
+        return compact ? String.format("%d days %d hours", days, hours) :
+            String.format("%d days %d hours %d minutes %d seconds", days, hours, minutes, seconds);
     }
 
     private long anniversaryShiftSec() {

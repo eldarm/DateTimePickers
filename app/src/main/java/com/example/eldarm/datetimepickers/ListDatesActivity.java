@@ -138,6 +138,12 @@ public class ListDatesActivity extends ActionBarActivity {
             startActivity(intent);
             return true;
         }
+        if (id == R.id.action_clear_dates) {
+            Vector<SpecialDate> empty = new Vector<SpecialDate>();
+            itemAdapter.setDates(empty);
+            itemAdapter.saveDates();
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 }
