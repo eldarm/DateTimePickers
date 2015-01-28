@@ -52,7 +52,8 @@ class SpecialDate {
 
     @Override
     public String toString() {
-        return showUntilAnniversary ? timeTillAnniversary(true) : timeSince(true);
+        return getLabel() + ": "
+               + (showUntilAnniversary ? timeTillAnniversary(true) : timeSince(true));
     }
 
     public String getDate() {
@@ -73,7 +74,8 @@ class SpecialDate {
         } else {
             shift = -shift;
         }
-        String yearsString = years == 0 ? "" : String.format("%d years ", years);
+        String yearsString = years == 0 ? "" :
+                             String.format("%d", years) + (compact ? "y " : " years ");
         return yearsString + formatShift(shift, compact);
     }
 
@@ -114,7 +116,7 @@ class SpecialDate {
         long minutes = shift / secInMin % minInHour;
         long hours = shift / (secInMin * minInHour) % hoursInDay;
         long days = shift / (secInMin * minInHour * hoursInDay);
-        return compact ? String.format("%d days %d hours", days, hours) :
+        return compact ? String.format("%dd %dh", days, hours) :
             String.format("%d days %d hours %d minutes %d seconds", days, hours, minutes, seconds);
     }
 
